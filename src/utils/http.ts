@@ -18,10 +18,10 @@ const httpInterceptor = {
       ...options.header,
     }
     // 3. 添加 token 请求头标识
-    const token = useUserStore()?.token
-    if (token) {
-      options.header.Authorization = token
-    }
+    // const token = useUserStore()?.token
+    // if (token) {
+    //   options.header.Authorization = token
+    // }
   },
 }
 
@@ -46,7 +46,7 @@ export const http = <T>(options: UniApp.RequestOptions) => {
           resolve(res.data as Data<T>)
         } else if (res.statusCode === 401) {
           // 3.1 401错误  -> 清理用户信息，跳转到登录页
-          useUserStore().clearToken()
+          useUserStore().clearUserInfo()
           uni.navigateTo({
             url: '/subPackages/login/login',
           })

@@ -2,7 +2,12 @@ export interface registerParma {
     account: string,
     password: string
 }
-interface registerResponseParam {
-    message: string,
-    status: string
+export interface registerResponseParam {
+    status:string,
+    token:string,
+    user_info:UserInfo
+}
+export interface UserInfo {
+    account: string,
+    password: string
 }

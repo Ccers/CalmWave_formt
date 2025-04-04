@@ -7,6 +7,7 @@ export {}
 declare global {
   const EffectScope: typeof import('vue')['EffectScope']
   const acceptHMRUpdate: typeof import('pinia')['acceptHMRUpdate']
+  const ai_askAPI: typeof import('../utils/ai_askAPI')['ai_askAPI']
   const ask_aiRequest: typeof import('../utils/request')['ask_aiRequest']
   const computed: typeof import('vue')['computed']
   const createApp: typeof import('vue')['createApp']

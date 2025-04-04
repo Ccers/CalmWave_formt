@@ -63,12 +63,13 @@
 <script>
 import { ref } from "vue";
 import { registerApi } from "@/utils/register"
+import { useUserStore } from '@/stores/index';
 export default {
   setup() {
     const account = ref("");
     const password = ref("");
     const rememberMe = ref(false);
-
+    const userStore = useUserStore();
     const handleLogin = async () => {
       console.log('点击登录按钮')
       if(!account.value || !password.value){
@@ -79,16 +80,22 @@ export default {
         return ;
       }
       try{
-        console.log("准备发送请求，账号：", account.value, "密码：", password.value);
         const res=await registerApi({
           account:account.value,
           password:password.value,
         })
-        console.log(res)
+        console.log(res.result)
+        userStore.setUserInfo({
+          account:res.result.account,
+          username:res.result.username
+        })
         uni.showToast({
           title:'登录成功',
           icon:'success'
         });
+        uni.switchTab({
+          url:'/pages/index/index',
+        })
       }
       catch(error){
         console.log(error)
@@ -203,7 +210,6 @@ page {
 /* 登录按钮 */
 .login-button {
   width: 100%;
-  padding: 10px;
   background: #2c3e50;
   color: white;
   border: none;

@@ -1,8 +1,8 @@
-export interface AskRequest {
+export interface AskParam {
     question: string;
     user_id: string;
 }
 
-export interface AskResponse {
+export interface AskResponseParam {
     answer: string;
 }

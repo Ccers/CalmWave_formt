@@ -4,8 +4,8 @@
       <view class="dashboard-container">
         <canvas canvas-id="gaugeCanvas" class="gauge-canvas"></canvas>
         <text class="emoji">{{ emoji }}</text>
-        <text class="pressure-text">{{ pressure }}%</text>
-        <text class="circle-text">实时压力：{{ pressure }}%，{{ timeAgo }} 分钟之前</text>
+        <text class="pressure-text">{{ pressureLevel }}</text>
+        <text class="circle-text">实时压力：{{ pressureLevel }}，{{ timeAgo }} 分钟之前</text>
       </view>
     </view>
 
@@ -15,6 +15,10 @@
 
     <button type="primary" @click="generateMusic">生成音乐</button>
   </view>
+  <view class="tips">
+    <p class="title">今日心情小贴士</p>
+    <p class="content">{{ tip }}</p>
+  </view>
 </template>
 
 <script setup>
@@ -22,13 +26,21 @@ import { ref, onMounted } from 'vue'
 
 // 响应式数据
 const pressure = ref(15)
+const pressureLevel=ref('A')
 const musicUrl = ref('')
 const bpm = ref(0)
 const timeAgo = ref(6)
 const emoji = ref('😊')
 const pressureHistory = ref([41, 30, 28, 44])
 const timeLabels = ref(['01:28', '11:44', '13:30', '15:45'])
-
+const tips = {
+  A: '保持放松，深呼吸，有助于缓解压力。',
+  B: '适量运动，散步或拉伸可以帮助放松身心。',
+  C: '尝试冥想或听轻松的音乐，舒缓情绪。',
+  D: '与朋友交流，分享你的感受，获得支持。',
+  E: '保证充足睡眠，调整作息，提高精力。'
+};
+const tip = computed(() => tips[pressureLevel.value] || '保持积极心态，迎接每一天！');
 // 生命周期
 onMounted(() => {
   loadHistoryData()
@@ -255,12 +267,13 @@ const drawLineChart = () => {
 page {
   background: linear-gradient(135deg, #cce5ff,#ffffff );
   color: #2c3e50;
+  height: 100vh;
 }
 .container {
   padding: 20rpx;
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  
 }
 
 .pressure-input {
@@ -279,7 +292,7 @@ page {
 .dashboard-container {
   width: 600rpx;
   height: 600rpx;
-  transform: translateX(11%) translateY(50%);
+  transform: translateX(15%) translateY(50%);
 }
 
 .gauge-canvas {
@@ -304,7 +317,7 @@ page {
   color: #ff6a00;
   top: 65%;
   left: 50%;
-  transform: translate(-50%, 30%);
+  transform: translate(-75%, 30%);
 }
 
 .circle-text {
@@ -313,7 +326,7 @@ page {
   color: #666;
   top: 35%;
   left: 50%;
-  transform: translate(-50%, -900%);
+  transform: translate(-65%, -900%);
 }
 
 .bpm-section {
@@ -341,5 +354,27 @@ button[type='primary'] {
 audio {
   width: 80%;
   margin-top: 50rpx;
+}
+.tips {
+  padding: 15px;
+  background: linear-gradient(135deg, #f0f8ff, #dbeafe);
+  border-radius: 10px;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  max-width: 300px;
+  margin: 20px auto;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #0077b6;
+  margin-bottom: 10px;
+}
+
+.content {
+  font-size: 16px;
+  color: #333;
+  line-height: 1.5;
 }
 </style>

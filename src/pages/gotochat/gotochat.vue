@@ -22,12 +22,14 @@
     </scroll-view>
 
     <!-- 输入框 -->
-    <view class="chat-input">
+    <view class="chat-input" :style="{ marginBottom: inputMargin }">
       <input
         class="input-box animate-slide-up"
         v-model="userInput"
         placeholder="输入消息..."
         @confirm="sendMessage"
+        @focus="adjustInputMargin"
+        @blur="resetInputMargin"
       />
       <button class="send-button animate-bounce" @click="sendMessage">发送</button>
     </view>
@@ -36,25 +38,19 @@
 
 <script setup>
 import { ref, onMounted, nextTick } from 'vue'
+import { useUserStore } from '@/stores/modules/user'
+import { ai_askAPI } from '@/utils/ai_askAPI'
+// import type { AskParam, AskResponseParam } from '@/types/ai-ask'
 
 const messages = ref([
-  { role: 'bot', text: '你好，我是小荔！请问有什么可以帮你的吗？' },
-  { role: 'user', text: '我最近总是睡不好。' },
-  { role: 'bot', text: '听到这个消息有些担心呢～失眠持续多久了呀？是难以入睡，还是容易半夜醒来呢？' },
-  { role: 'user', text: '大概两周了，经常躺下1小时还睡不着，还会半夜惊醒两三次。' },
-  { role: 'bot', text: '这样确实很影响状态呢！最近压力大吗？可以试试睡前用温水泡脚，或者听白噪音放松哦～' },
-  { role: 'user', text: '工作压力挺大的...白噪音有什么推荐吗？' },
-  { role: 'bot', text: '雨声、篝火声或海浪声都很受欢迎呢！我注意到您凌晨1点还在用手机，屏幕蓝光会影响褪黑素分泌哦，试试提前半小时放下手机吧✨' }
+  { role: 'bot', text: '你好，我是小荔！请问有什么可以帮你的吗？' }
 ])
 const userInput = ref('')
-const marginTop = ref(0)
 const scrollTo = ref('')
+const inputMargin = ref('0px')
+const userStore=useUserStore()
 
-onMounted(() => {
-  calculateTopHeight()
-})
-
-const sendMessage = () => {
+const sendMessage = async () => {
   if (!userInput.value.trim()) return
 
   const messageIndex = messages.value.length
@@ -67,21 +63,46 @@ const sendMessage = () => {
   const userMessage = userInput.value
   userInput.value = ''
 
-  setTimeout(() => {
-    messages.value.push({ role: 'bot', text: `听起来你最近压力很大，失眠一定很难受💙。试试深呼吸、听点轻柔的音乐，或者和我聊聊，让心情放松下来。😊` })
-    nextTick(() => {
-      scrollTo.value = 'msg-' + (messages.value.length - 1)
+  try{
+    const params={
+      user_id:userStore.user_id,
+      question:userMessage
+    }
+    const response= await ai_askAPI(params)
+    console.log(response.result)
+    if(response.result && response.result.answer){
+      messages.value.push({
+        role:'bot',
+        text:response.result.answer
+      })
+    } else {
+      messages.value.push({
+        role: 'bot', 
+        text: '抱歉，我暂时无法回答这个问题。请稍后再试。' 
+      })
+    }
+  } catch(error){
+      console.error('API请求失败:', error)
+      messages.value.push({ 
+      role: 'bot', 
+      text: '网络似乎不太稳定，请检查连接后重试。' 
     })
-  }, 800)
+  }
+
+  // setTimeout(() => {
+  //   messages.value.push({ role: 'bot', text: `听起来你最近压力很大，失眠一定很难受💙。试试深呼吸、听点轻柔的音乐，或者和我聊聊，让心情放松下来。😊` })
+  //   nextTick(() => {
+  //     scrollTo.value = 'msg-' + (messages.value.length - 1)
+  //   })
+  // }, 800)
 }
 
-const calculateTopHeight = () => {
-  uni.getSystemInfo({
-    success: function (res) {
-      const menuButtonInfo = uni.getMenuButtonBoundingClientRect()
-      marginTop.value = menuButtonInfo.top + menuButtonInfo.height + 10
-    },
-  })
+const adjustInputMargin = () => {
+  inputMargin.value = '50px'; // 适当调整这个值，避免整个聊天记录上移过多
+}
+
+const resetInputMargin = () => {
+  inputMargin.value = '0px';
 }
 </script>
 
@@ -125,16 +146,6 @@ const calculateTopHeight = () => {
   margin: 0 10rpx;
 }
 
-/* 机器人头像 */
-.bot-avatar {
-  order: -1; /* 机器人头像始终在左 */
-}
-
-/* 用户头像 */
-.user-avatar {
-  order: 1; /* 用户头像始终在右 */
-}
-
 /* 消息气泡 */
 .message {
   max-width: 75%;
@@ -168,6 +179,7 @@ const calculateTopHeight = () => {
   backdrop-filter: blur(10rpx);
   border-radius: 15rpx;
   padding: 12rpx;
+  transition: margin-bottom 0.3s ease;
 }
 
 .input-box {

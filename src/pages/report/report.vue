@@ -19,7 +19,7 @@
     <view class="update-time">更新时间: {{ updateTime }}</view>
 
     <!-- 玻璃卡片 -->
-    <view class="glass-card animate-fade-in">
+    <view class="glass-card animate-fade-in" style="width:95%; height:600rpx;display:flex;justify-content:center">
       <canvas class="chart" canvas-id="hrvChart" id="hrvChart"></canvas>
     </view>
 
@@ -122,7 +122,7 @@ onMounted(() => {
   text-transform: uppercase;
   color: #007BFF;
   text-shadow: 1px 1px 5px rgba(0, 123, 255, 0.5);
-  margin-bottom: 10rpx;
+  margin-bottom: 50rpx;
 }
 
 /* 更新时间 */
@@ -184,8 +184,8 @@ onMounted(() => {
 
 /* 图表 */
 .chart {
-  width: 100%;
-  height: 100%;
+  width: 90%;
+  height: 90%;
 }
 
 /* 低压力占比 */
