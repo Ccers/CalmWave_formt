@@ -1,6 +1,6 @@
 export interface AskParam {
     question: string;
-    user_id: string;
+    aacount: string;
 }
 
 export interface AskResponseParam {

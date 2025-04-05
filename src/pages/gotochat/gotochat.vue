@@ -65,9 +65,10 @@ const sendMessage = async () => {
 
   try{
     const params={
-      user_id:userStore.user_id,
+      account:userStore.account,
       question:userMessage
     }
+    console.log(params)
     const response= await ai_askAPI(params)
     console.log(response.result)
     if(response.result && response.result.answer){

@@ -12,9 +12,9 @@ export default defineConfig({
   build: {
     // 在开发阶段启用源码映射，方便调试
     sourcemap: process.env.NODE_ENV === 'development',
-    watch: {
-			exclude: ['node_modules/**', "/__uno.css"]
-		},
+  //   watch: {
+		// 	exclude: ['node_modules/**', "/__uno.css"]
+		// },
   },
   plugins: [
     /**

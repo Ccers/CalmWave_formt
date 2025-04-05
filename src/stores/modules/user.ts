@@ -26,6 +26,8 @@ export const useUserStore = defineStore(
 
     // 记得 return
     return {
+      account,
+      username,
       clearUserInfo,
       setUserInfo
     }

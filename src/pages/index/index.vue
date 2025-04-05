@@ -23,7 +23,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-
+import { useUserStore } from '@/stores/modules/user'
 // 响应式数据
 const pressure = ref(40)
 const pressureLevel=ref('B')
@@ -43,6 +43,7 @@ const tips = {
 const tip = computed(() => tips[pressureLevel.value] || '保持积极心态，迎接每一天！');
 // 生命周期
 onMounted(() => {
+  checklogin()
   loadHistoryData()
   setTimeout(() => {
     drawGauge(pressure.value)
@@ -265,6 +266,19 @@ const drawLineChart = () => {
   ctx.stroke()
 
   ctx.draw()
+}
+const userStore=useUserStore()
+const checklogin=()=>{
+  // console.log(userStore.account)
+  if(!userStore.account){
+    uni.showToast({
+      title: '请先登录',
+      icon: 'none'
+    })
+    uni.redirectTo({
+      url:'/pages/register/register',
+    })
+  }
 }
 </script>
 
