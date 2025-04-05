@@ -25,8 +25,8 @@
 import { ref, onMounted } from 'vue'
 
 // 响应式数据
-const pressure = ref(15)
-const pressureLevel=ref('A')
+const pressure = ref(40)
+const pressureLevel=ref('B')
 const musicUrl = ref('')
 const bpm = ref(0)
 const timeAgo = ref(6)
@@ -67,62 +67,67 @@ const loadHistoryData = () => {
 }
 
 const generateMusic = async () => {
-  uni.showLoading({ title: '生成中...', mask: true })
-
-  try {
-    const res = await uni.request({
-      url: 'http://192.168.47.1:5000/generate',
-      method: 'POST',
-      data: { pressure: pressure.value },
+  uni.showLoading({ title: '生成中音乐...', mask: true })
+  setTimeout(()=>{
+    uni.showToast({
+      title: '开始播放',
+      icon: 'success'
     })
+  },500);
+//   try {
+//     const res = await uni.request({
+//       url: 'http://192.168.47.1:5000/generate',
+//       method: 'POST',
+//       data: { pressure: pressure.value },
+//     })
 
-    if (res[1].data?.music_url) {
-      initializeAudio(res[1].data.music_url)
-      updateVisualData(res[1].data)
-    } else {
-      uni.showToast({ title: '服务响应格式错误', icon: 'none' })
-    }
-  } catch (err) {
-    uni.showToast({ title: `网络错误: ${err.errMsg}`, icon: 'none' })
-  } finally {
-    uni.hideLoading()
-  }
-}
+//     if (res[1].data?.music_url) {
+//       initializeAudio(res[1].data.music_url)
+//       updateVisualData(res[1].data)
+//     } else {
+//       uni.showToast({ title: '服务响应格式错误', icon: 'none' })
+//     }
+//   } catch (err) {
+//     uni.showToast({ title: `网络错误: ${err.errMsg}`, icon: 'none' })
+//   } finally {
+//     uni.hideLoading()
+//   }
+// }
 
-const initializeAudio = (musicPath) => {
-  const audioCtx = uni.createInnerAudioContext()
-  const fullUrl = `http://192.168.47.1:5000${encodeURI(musicPath)}?t=${Date.now()}`
+// const initializeAudio = (musicPath) => {
+//   const audioCtx = uni.createInnerAudioContext()
+//   const fullUrl = `http://192.168.47.1:5000${encodeURI(musicPath)}?t=${Date.now()}`
 
-  audioCtx.onCanplay(() => {
-    audioCtx.play()
-  })
+//   audioCtx.onCanplay(() => {
+//     audioCtx.play()
+//   })
 
-  audioCtx.onError((err) => {
-    console.error('播放失败:', err)
-    uni.showToast({ title: `音频错误: ${err.errCode}`, icon: 'none' })
-  })
+//   audioCtx.onError((err) => {
+//     console.error('播放失败:', err)
+//     uni.showToast({ title: `音频错误: ${err.errCode}`, icon: 'none' })
+//   })
 
-  musicUrl.value = fullUrl
-}
+//   musicUrl.value = fullUrl
+// }
 
-const updateVisualData = (data) => {
-  bpm.value = Math.round(data.visual_data?.bpm) || 0
-  saveHistoryData()
-}
+// const updateVisualData = (data) => {
+//   bpm.value = Math.round(data.visual_data?.bpm) || 0
+//   saveHistoryData()
+// }
 
-const saveHistoryData = () => {
-  const newRecord = {
-    pressure: pressure.value,
-    timestamp: Date.now(),
-  }
+// const saveHistoryData = () => {
+//   const newRecord = {
+//     pressure: pressure.value,
+//     timestamp: Date.now(),
+//   }
 
-  pressureHistory.value = [...pressureHistory.value, newRecord].slice(-10)
+//   pressureHistory.value = [...pressureHistory.value, newRecord].slice(-10)
 
-  try {
-    uni.setStorageSync('pressureHistory', pressureHistory.value)
-  } catch (e) {
-    console.error('本地存储写入失败:', e)
-  }
+//   try {
+//     uni.setStorageSync('pressureHistory', pressureHistory.value)
+//   } catch (e) {
+//     console.error('本地存储写入失败:', e)
+//   }
 }
 
 const onAudioError = (e) => {
@@ -307,7 +312,7 @@ page {
   font-size: 80px;
   top: 48%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-65%, -50%);
 }
 
 .pressure-text {
@@ -317,7 +322,7 @@ page {
   color: #ff6a00;
   top: 65%;
   left: 50%;
-  transform: translate(-75%, 30%);
+  transform: translate(-90%, 30%);
 }
 
 .circle-text {
@@ -326,7 +331,7 @@ page {
   color: #666;
   top: 35%;
   left: 50%;
-  transform: translate(-65%, -900%);
+  transform: translate(-60%, -900%);
 }
 
 .bpm-section {
